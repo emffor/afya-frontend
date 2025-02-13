@@ -133,35 +133,6 @@ const DashboardPage: React.FC = () => {
         </Grid>
       </Grid>
 
-      <Card sx={{ mb: 4, width: '100%' }}>
-        <CardContent>
-          <Typography variant="h5" gutterBottom>Metrics Overview</Typography>
-          <Box sx={{ height: 400 }}>
-            <Bar
-              data={chartDataMetrics}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  tooltip: {
-                    callbacks: {
-                      label: (context) => {
-                        const label = context.dataset.label || '';
-                        const value = context.parsed.y;
-                        return `${label}: ${value}`;
-                      },
-                    },
-                  },
-                  legend: { position: 'top' },
-                  title: { display: true, text: 'Dashboard Metrics' },
-                },
-                scales: { y: { beginAtZero: true } },
-              }}
-            />
-          </Box>
-        </CardContent>
-      </Card>
-
       <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
         <Typography variant="h6" sx={{ mr: 2 }}>Orders by Period:</Typography>
         <FormControl variant="outlined" size="small">
