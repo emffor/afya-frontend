@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import { Order } from '../types/Order';
+import { Product } from '../types/Product';
 import {
   Container,
   Typography,
@@ -17,10 +18,18 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  OutlinedInput,
+  Checkbox,
+  ListItemText,
 } from '@mui/material';
 
 const OrdersPage: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -28,7 +37,7 @@ const OrdersPage: React.FC = () => {
   const [formData, setFormData] = useState({
     total: 0,
     orderDate: '',
-    products: '', 
+    products: [] as string[], 
   });
 
   const fetchOrders = () => {
@@ -37,12 +46,19 @@ const OrdersPage: React.FC = () => {
       .catch((error) => console.error('Error fetching orders:', error));
   };
 
+  const fetchProducts = () => {
+    api.get<Product[]>('/products')
+      .then((response) => setProducts(response.data))
+      .catch((error) => console.error('Error fetching products:', error));
+  };
+
   useEffect(() => {
     fetchOrders();
+    fetchProducts();
   }, []);
 
   const openAddModal = () => {
-    setFormData({ total: 0, orderDate: '', products: '' });
+    setFormData({ total: 0, orderDate: '', products: [] });
     setCurrentOrder(null);
     setModalOpen(true);
   };
@@ -51,7 +67,7 @@ const OrdersPage: React.FC = () => {
     setFormData({
       total: order.total,
       orderDate: order.orderDate.substring(0, 10), 
-      products: order.products.join(', '),
+      products: order.products,
     });
     setCurrentOrder(order);
     setModalOpen(true);
@@ -62,25 +78,21 @@ const OrdersPage: React.FC = () => {
     setCurrentOrder(null);
   };
 
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name as string]: value });
   };
 
   const handleSave = () => {
-    const payload = {
-      ...formData,
-      products: formData.products.split(',').map((p) => p.trim()),
-    };
-
     if (currentOrder) {
-      api.put(`/orders/${currentOrder._id}`, payload)
+      api.put(`/orders/${currentOrder._id}`, formData)
         .then(() => {
           fetchOrders();
           setModalOpen(false);
         })
         .catch((error) => console.error('Error updating order:', error));
     } else {
-      api.post('/orders', payload)
+      api.post('/orders', formData)
         .then(() => {
           fetchOrders();
           setModalOpen(false);
@@ -169,14 +181,32 @@ const OrdersPage: React.FC = () => {
             value={formData.orderDate}
             onChange={handleFormChange}
           />
-          <TextField
-            margin="dense"
-            name="products"
-            label="Products (comma separated IDs)"
-            fullWidth
-            value={formData.products}
-            onChange={handleFormChange}
-          />
+          <FormControl fullWidth margin="dense">
+            <InputLabel id="products-select-label">Products</InputLabel>
+            <Select
+              labelId="products-select-label"
+              multiple
+              name="products"
+              value={formData.products}
+              onChange={handleFormChange as any}
+              input={<OutlinedInput label="Products" />}
+              renderValue={(selected) => 
+                (selected as string[])
+                  .map((id) => {
+                    const prod = products.find((p) => p._id === id);
+                    return prod ? prod.name : id;
+                  })
+                  .join(', ')
+              }
+            >
+              {products.map((prod) => (
+                <MenuItem key={prod._id} value={prod._id}>
+                  <Checkbox checked={formData.products.indexOf(prod._id) > -1} />
+                  <ListItemText primary={prod.name} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModal} color="secondary">Cancel</Button>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import { Product } from '../types/Product';
+import { Category } from '../types/Category';
 import {
   Container,
   Typography,
@@ -17,10 +18,16 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
 } from '@mui/material';
 
 const ProductsPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -37,8 +44,15 @@ const ProductsPage: React.FC = () => {
       .catch((error) => console.error('Error fetching products:', error));
   };
 
+  const fetchCategories = () => {
+    api.get<Category[]>('/categories')
+      .then((response) => setCategories(response.data))
+      .catch((error) => console.error('Error fetching categories:', error));
+  };
+
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
 
   const openAddModal = () => {
@@ -62,22 +76,28 @@ const ProductsPage: React.FC = () => {
     setCurrentProduct(null);
   };
 
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }> | SelectChangeEvent
+  ) => {
+    const { name, value } = e.target as { name?: string; value: unknown };
+    setFormData({ ...formData, [name as string]: value as string });
   };
 
   const handleSave = () => {
+    const payload = {
+      ...formData,
+      category: formData.categoryId,
+    };
+  
     if (currentProduct) {
-      // Atualiza produto
-      api.put(`/products/${currentProduct._id}`, formData)
+      api.put(`/products/${currentProduct._id}`, payload)
         .then(() => {
           fetchProducts();
           setModalOpen(false);
         })
         .catch((error) => console.error('Error updating product:', error));
     } else {
-      // Cria novo produto
-      api.post('/products', formData)
+      api.post('/products', payload)
         .then(() => {
           fetchProducts();
           setModalOpen(false);
@@ -85,6 +105,7 @@ const ProductsPage: React.FC = () => {
         .catch((error) => console.error('Error creating product:', error));
     }
   };
+  
 
   const handleDelete = (id: string) => {
     setDeleteProductId(id);
@@ -110,7 +131,9 @@ const ProductsPage: React.FC = () => {
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>Products</Typography>
+      <Typography variant="h4" gutterBottom>
+        Products
+      </Typography>
       <Button variant="contained" color="primary" onClick={openAddModal}>
         Add Product
       </Button>
@@ -131,10 +154,10 @@ const ProductsPage: React.FC = () => {
                 <TableCell>${product.price}</TableCell>
                 <TableCell>{product.category.name}</TableCell>
                 <TableCell>
-                  <Button color="primary" onClick={() => openEditModal(product)}>
+                  <Button variant="contained" color="primary" onClick={() => openEditModal(product)}>
                     Edit
                   </Button>
-                  <Button color="secondary" onClick={() => handleDelete(product._id)}>
+                  <Button variant="contained" color="secondary" onClick={() => handleDelete(product._id)}>
                     Delete
                   </Button>
                 </TableCell>
@@ -164,30 +187,45 @@ const ProductsPage: React.FC = () => {
             value={formData.price}
             onChange={handleFormChange}
           />
-          <TextField
-            margin="dense"
-            name="categoryId"
-            label="Category ID"
-            fullWidth
-            value={formData.categoryId}
-            onChange={handleFormChange}
-          />
+          <FormControl fullWidth margin="dense">
+            <InputLabel id="category-select-label">Category</InputLabel>
+            <Select
+              labelId="category-select-label"
+              name="categoryId"
+              value={formData.categoryId}
+              label="Category"
+              onChange={handleFormChange}
+            >
+              {categories.map((cat) => (
+                <MenuItem key={cat._id} value={cat._id}>
+                  {cat.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseModal} color="secondary">Cancel</Button>
-          <Button onClick={handleSave} color="primary">Save</Button>
+          <Button onClick={handleCloseModal} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} color="primary">
+            Save
+          </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Modal de Confirmação de Deleção */}
       <Dialog open={deleteModalOpen} onClose={cancelDelete}>
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
           <Typography>Are you sure you want to delete this product?</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelDelete} color="primary">Cancel</Button>
-          <Button onClick={confirmDelete} color="secondary">Delete</Button>
+          <Button onClick={cancelDelete} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={confirmDelete} color="secondary">
+            Delete
+          </Button>
         </DialogActions>
       </Dialog>
     </Container>
