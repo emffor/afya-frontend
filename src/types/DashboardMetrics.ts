@@ -1,6 +1,5 @@
 export interface DashboardMetrics {
-    totalOrders: number;
-    totalRevenue: number;
-    averageOrderValue: number;
-  }
-  
+  totalOrders: number;
+  totalRevenue: number;
+  averageOrderValue: number;
+}
