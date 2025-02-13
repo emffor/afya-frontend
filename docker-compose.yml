@@ -1,0 +1,12 @@
+version: '3'
+services:
+  react:
+    build: .
+    container_name: reactjs
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - REACT_APP_API_URL=http://nestjs:3000
+      - REACT_APP_S3_ENDPOINT=http://localstack:4566
+      - REACT_APP_S3_BUCKET=my-bucket
