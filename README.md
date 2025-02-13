@@ -34,6 +34,7 @@ O Afya Frontend é um sistema de gerenciamento que oferece uma interface intuiti
 - Chart.js
 - React Router DOM v7
 - Axios
+- Storybook 8.5
 
 ## Pré-requisitos
 
@@ -51,15 +52,32 @@ cd afya-frontend
 
 # Instale as dependências
 yarn install
-
-# Inicie o projeto
-yarn start
 ```
+
+## Executando o Projeto
+
+```bash
+# Inicie a aplicação
+yarn start
+
+# Execute o Storybook (documentação dos componentes)
+yarn storybook
+```
+
+A aplicação estará disponível em `http://localhost:3001`
+O Storybook estará disponível em `http://localhost:6006`
 
 ## Estrutura do Projeto
 
 ```
 src/
+  ├── components/          # Componentes reutilizáveis
+  │   ├── ProductsTable/
+  │   │   ├── ProductsTable.tsx
+  │   │   └── ProductsTable.stories.tsx
+  │   └── ProductForm/
+  │       ├── ProductForm.tsx
+  │       └── ProductForm.stories.tsx
   ├── pages/
   │   ├── DashboardPage.tsx
   │   ├── ProductsPage.tsx
@@ -73,3 +91,14 @@ src/
   │   └── api.ts
   └── App.tsx
 ```
+
+## Documentação de Componentes
+
+O projeto utiliza o Storybook para documentação dos componentes principais. Para visualizar a documentação:
+
+1. Execute o comando `yarn storybook`
+2. Acesse `http://localhost:6006` no navegador
+
+Componentes documentados:
+- ProductsTable: Tabela para listagem de produtos
+- ProductForm: Formulário para criação/edição de produtos
