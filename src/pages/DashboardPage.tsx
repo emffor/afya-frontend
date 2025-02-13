@@ -1,5 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Button, Box, Grid, Card, CardContent } from '@mui/material';
+import { 
+  Container, 
+  Typography, 
+  Button, 
+  Box, 
+  Card, 
+  CardContent, 
+  MenuItem, 
+  FormControl, 
+  InputLabel, 
+  Select, 
+  Grid
+} from '@mui/material';
 import { DashboardMetrics } from '../types/DashboardMetrics';
 import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +28,7 @@ import {
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import { OrdersByPeriod } from '../types/OrdersByPeriod';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -25,6 +38,8 @@ const DashboardPage: React.FC = () => {
     totalRevenue: 0,
     averageOrderValue: 0,
   });
+  const [ordersByPeriod, setOrdersByPeriod] = useState<OrdersByPeriod[]>([]);
+  const [selectedPeriod, setSelectedPeriod] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,7 +48,13 @@ const DashboardPage: React.FC = () => {
       .catch((error) => console.error('Error fetching dashboard metrics:', error));
   }, []);
 
-  const chartData = {
+  useEffect(() => {
+    api.get<OrdersByPeriod[]>(`/dashboard/orders-by-period?period=${selectedPeriod}`)
+      .then((response) => setOrdersByPeriod(response.data))
+      .catch((error) => console.error('Error fetching orders by period:', error));
+  }, [selectedPeriod]);
+
+  const chartDataMetrics = {
     labels: ['Total Orders', 'Total Revenue', 'Avg Order Value'],
     datasets: [
       {
@@ -48,12 +69,21 @@ const DashboardPage: React.FC = () => {
     ],
   };
 
+  const chartDataOrders = {
+    labels: ordersByPeriod.map((item) => item.period),
+    datasets: [
+      {
+        label: 'Orders',
+        data: ordersByPeriod.map((item) => item.count),
+        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+      },
+    ],
+  };
+
   return (
     <Container sx={{ mt: 4 }}>
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h4" component="h1">
-          Dashboard
-        </Typography>
+        <Typography variant="h4" component="h1">Dashboard</Typography>
         <Box>
           <Button variant="contained" color="primary" onClick={() => navigate('/products')} sx={{ mr: 1 }}>
             Products
@@ -68,9 +98,9 @@ const DashboardPage: React.FC = () => {
       </Box>
 
       <Grid container spacing={2} sx={{ mb: 4 }}>
-        <Grid item xs={12} md={4}>
-          <Card sx={{ minWidth: 275 }}>
-            <CardContent>
+        <Grid xs={12} md={4}>
+          <Card sx={{ minWidth: 275, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                 <ShoppingCartIcon fontSize="large" sx={{ mr: 1 }} />
                 <Typography variant="h6">Total Orders</Typography>
@@ -79,9 +109,9 @@ const DashboardPage: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={4}>
-          <Card sx={{ minWidth: 275 }}>
-            <CardContent>
+        <Grid xs={12} md={4}>
+          <Card sx={{ minWidth: 275, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                 <AttachMoneyIcon fontSize="large" sx={{ mr: 1 }} />
                 <Typography variant="h6">Total Revenue</Typography>
@@ -90,9 +120,9 @@ const DashboardPage: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={4}>
-          <Card sx={{ minWidth: 275 }}>
-            <CardContent>
+        <Grid xs={12} md={4}>
+          <Card sx={{ minWidth: 275, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                 <MonetizationOnIcon fontSize="large" sx={{ mr: 1 }} />
                 <Typography variant="h6">Avg Order Value</Typography>
@@ -103,33 +133,76 @@ const DashboardPage: React.FC = () => {
         </Grid>
       </Grid>
 
-      <Card sx={{ mb: 4, height: 400 }}>
-        <CardContent sx={{ height: '100%', p: 2 }}>
-          <Typography variant="h5" gutterBottom>
-            Metrics Overview
-          </Typography>
-          <Box sx={{ height: 'calc(100% - 48px)' }}>
-              <Bar
-                data={chartData}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: {
-                    tooltip: {
-                      callbacks: {
-                        label: function (context) {
-                          const label = context.dataset.label || '';
-                          const value = context.parsed.y;
-                          return `${label}: ${value}`;
-                        },
+      <Card sx={{ mb: 4, width: '100%' }}>
+        <CardContent>
+          <Typography variant="h5" gutterBottom>Metrics Overview</Typography>
+          <Box sx={{ height: 400 }}>
+            <Bar
+              data={chartDataMetrics}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  tooltip: {
+                    callbacks: {
+                      label: (context) => {
+                        const label = context.dataset.label || '';
+                        const value = context.parsed.y;
+                        return `${label}: ${value}`;
                       },
                     },
-                    legend: { position: 'top' },
-                    title: { display: true, text: 'Dashboard Metrics' },
                   },
-                }}
-                style={{ height: '100%', width: '100%' }}
-              />
+                  legend: { position: 'top' },
+                  title: { display: true, text: 'Dashboard Metrics' },
+                },
+                scales: { y: { beginAtZero: true } },
+              }}
+            />
+          </Box>
+        </CardContent>
+      </Card>
+
+      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
+        <Typography variant="h6" sx={{ mr: 2 }}>Orders by Period:</Typography>
+        <FormControl variant="outlined" size="small">
+          <InputLabel id="period-select-label">Period</InputLabel>
+          <Select
+            labelId="period-select-label"
+            value={selectedPeriod}
+            label="Period"
+            onChange={(e) => setSelectedPeriod(e.target.value as 'daily' | 'weekly' | 'monthly')}
+          >
+            <MenuItem value="daily">Daily</MenuItem>
+            <MenuItem value="weekly">Weekly</MenuItem>
+            <MenuItem value="monthly">Monthly</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+
+      <Card sx={{ mb: 4, width: '100%' }}>
+        <CardContent>
+          <Typography variant="h5" gutterBottom>Orders by Period</Typography>
+          <Box sx={{ height: 400 }}>
+            <Bar
+              data={chartDataOrders}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  tooltip: {
+                    callbacks: {
+                      label: (context) => {
+                        const value = context.parsed.y;
+                        return `Orders: ${value}`;
+                      },
+                    },
+                  },
+                  legend: { position: 'top' },
+                  title: { display: true, text: 'Orders by Period' },
+                },
+                scales: { y: { beginAtZero: true } },
+              }}
+            />
           </Box>
         </CardContent>
       </Card>
