@@ -26,7 +26,13 @@ import {
   OutlinedInput,
   Checkbox,
   ListItemText,
+  SelectChangeEvent,
 } from '@mui/material';
+
+
+function setDeleteProductId(arg0: null) {
+  throw new Error('Function not implemented.');
+}
 
 const OrdersPage: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -38,7 +44,7 @@ const OrdersPage: React.FC = () => {
   const [formData, setFormData] = useState({
     total: 0,
     orderDate: '',
-    products: [] as string[], 
+    products: [] as string[],
   });
   const navigate = useNavigate();
 
@@ -68,8 +74,10 @@ const OrdersPage: React.FC = () => {
   const openEditModal = (order: Order) => {
     setFormData({
       total: order.total,
-      orderDate: order.orderDate.substring(0, 10), 
-      products: order.products, 
+      orderDate: order.orderDate.substring(0, 10),
+      products: order.products.map((prod) =>
+        typeof prod === 'object' && prod !== null && '_id' in prod ? (prod as Product)._id : prod
+      ),
     });
     setCurrentOrder(order);
     setModalOpen(true);
@@ -85,6 +93,16 @@ const OrdersPage: React.FC = () => {
   ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name as string]: value });
+  };
+
+  const handleProductsChange = (event: SelectChangeEvent<string[]>) => {
+    const {
+      target: { value },
+    } = event;
+    setFormData({
+      ...formData,
+      products: typeof value === 'string' ? value.split(',') : value,
+    });
   };
 
   const handleSave = () => {
@@ -116,7 +134,7 @@ const OrdersPage: React.FC = () => {
         .then(() => {
           fetchOrders();
           setDeleteModalOpen(false);
-          setDeleteOrderId(null);
+          setDeleteProductId(null);
         })
         .catch((error) => console.error('Error deleting order:', error));
     }
@@ -126,6 +144,7 @@ const OrdersPage: React.FC = () => {
     setDeleteModalOpen(false);
     setDeleteOrderId(null);
   };
+
 
   return (
     <Container>
@@ -194,10 +213,10 @@ const OrdersPage: React.FC = () => {
             <InputLabel id="products-select-label">Products</InputLabel>
             <Select
               labelId="products-select-label"
-              multiple
               name="products"
+              multiple
               value={formData.products}
-              onChange={handleFormChange as any}
+              onChange={handleProductsChange}
               input={<OutlinedInput label="Products" />}
               renderValue={(selected) =>
                 (selected as string[])
@@ -216,6 +235,7 @@ const OrdersPage: React.FC = () => {
               ))}
             </Select>
           </FormControl>
+
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModal} color="secondary">
@@ -246,3 +266,5 @@ const OrdersPage: React.FC = () => {
 };
 
 export default OrdersPage;
+
+
