@@ -1,46 +1,75 @@
-# Getting Started with Create React App
+# Afya Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Sobre o Projeto
 
-## Available Scripts
+O Afya Frontend é um sistema de gerenciamento que oferece uma interface intuitiva para controle de produtos, categorias e pedidos. Desenvolvido com React e Material-UI, o sistema apresenta um dashboard interativo com métricas importantes do negócio.
 
-In the project directory, you can run:
+## Funcionalidades Principais
 
-### `yarn start`
+- **Dashboard**
+  - Visualização de métricas (Total de Pedidos, Receita Total, Valor Médio por Pedido)
+  - Gráficos interativos para análise de dados
+  - Navegação rápida para outras seções
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **Produtos**
+  - Listagem de produtos
+  - Cadastro, edição e remoção de produtos
+  - Associação com categorias
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- **Categorias**
+  - Gerenciamento de categorias de produtos
+  - Operações CRUD completas
+  - Interface intuitiva
 
-### `yarn test`
+- **Pedidos**
+  - Controle de pedidos
+  - Seleção múltipla de produtos
+  - Cálculo automático de totais
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Tecnologias Utilizadas
 
-### `yarn build`
+- React 19
+- TypeScript
+- Material-UI v6
+- Chart.js
+- React Router DOM v7
+- Axios
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Pré-requisitos
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Node.js
+- Yarn ou npm
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Instalação
 
-### `yarn eject`
+```bash
+# Clone o repositório
+git clone https://github.com/emffor/afya-frontend.git
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+# Entre no diretório
+cd afya-frontend
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Instale as dependências
+yarn install
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+# Inicie o projeto
+yarn start
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Estrutura do Projeto
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+src/
+  ├── pages/
+  │   ├── DashboardPage.tsx
+  │   ├── ProductsPage.tsx
+  │   ├── CategoriesPage.tsx
+  │   └── OrdersPage.tsx
+  ├── types/
+  │   ├── Product.ts
+  │   ├── Category.ts
+  │   └── Order.ts
+  ├── services/
+  │   └── api.ts
+  └── App.tsx
+```
