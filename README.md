@@ -1,123 +1,127 @@
 # Afya Frontend
 
-## Sobre o Projeto
+Sistema de gerenciamento de produtos, categorias e pedidos com dashboard de KPIs desenvolvido com React, Material UI e TypeScript.
 
-O Afya Frontend é um sistema de gerenciamento que oferece uma interface intuitiva para controle de produtos, categorias e pedidos. Desenvolvido com React e Material-UI, o sistema apresenta um dashboard interativo com métricas importantes do negócio.
+## 🚀 Funcionalidades
 
-## Funcionalidades Principais
+### Dashboard
+- Visualização de KPIs principais:
+  - Total de pedidos
+  - Receita total
+  - Valor médio dos pedidos
+- Gráfico de pedidos por período (diário/semanal/mensal)
+- Navegação rápida para outros módulos
 
-- **Dashboard**
-  - Visualização de métricas (Total de Pedidos, Receita Total, Valor Médio por Pedido)
-  - Gráficos interativos para análise de dados
-  - Navegação rápida para outras seções
+### Produtos
+- Listagem em tabela com paginação
+- Criação, edição e exclusão de produtos
+- Upload de imagens dos produtos
+- Associação com categorias
 
-- **Produtos**
-  - Listagem de produtos
-  - Cadastro, edição e remoção de produtos
-  - Associação com categorias
+### Categorias
+- Gerenciamento completo (CRUD)
+- Listagem em tabela
+- Formulário para criar/editar
 
-- **Categorias**
-  - Gerenciamento de categorias de produtos
-  - Operações CRUD completas
-  - Interface intuitiva
+### Pedidos
+- Visualização de todos os pedidos
+- Criação de novos pedidos
+- Seleção múltipla de produtos
+- Cálculo automático do total
 
-- **Pedidos**
-  - Controle de pedidos
-  - Seleção múltipla de produtos
-  - Cálculo automático de totais
-
-## Tecnologias Utilizadas
+## 🛠️ Tecnologias
 
 - React 19
-- TypeScript
-- Material-UI v6
-- Chart.js
-- React Router DOM v7
+- TypeScript 4
+- Material UI 6
+- Chart.js 4 
+- React Router Dom 7
 - Axios
-- Storybook 8.5
+- Storybook 8
 
-## Pré-requisitos
+## 📋 Pré-requisitos
 
-- Node.js
-- Yarn ou npm
+- Node.js 20+
+- Yarn
+- Docker e Docker Compose (opcional)
 
-## Instalação
+## ⚙️ Instalação
+
+### Desenvolvimento local
 
 ```bash
 # Clone o repositório
-git clone https://github.com/emffor/afya-frontend.git
+git clone https://github.com/seu-usuario/afya-frontend.git
 
-# Entre no diretório
+# Entre na pasta
 cd afya-frontend
 
 # Instale as dependências
 yarn install
+
+# Inicie o servidor de desenvolvimento
+yarn start
 ```
 
-## Executando o Projeto
+### Docker
 
 ```bash
-# Inicie a aplicação
-yarn start
+# Build e execução com Docker Compose
+docker-compose up -d
 
-# Execute o Storybook (documentação dos componentes)
-yarn storybook
+# Para parar os containers
+docker-compose down
 ```
 
-A aplicação estará disponível em `http://localhost:3001`
-O Storybook estará disponível em `http://localhost:6006`
+## 🔧 Configuração
 
-## Estrutura do Projeto
+Configure as variáveis de ambiente criando um arquivo `.env`:
+
+## 📦 Estrutura do Projeto
 
 ```
 src/
-  ├── components/          # Componentes reutilizáveis
-  │   ├── ProductsTable/
-  │   │   ├── ProductsTable.tsx
-  │   │   └── ProductsTable.stories.tsx
-  │   └── ProductForm/
-  │       ├── ProductForm.tsx
-  │       └── ProductForm.stories.tsx
-  ├── pages/
-  │   ├── DashboardPage.tsx
-  │   ├── ProductsPage.tsx
-  │   ├── CategoriesPage.tsx
-  │   └── OrdersPage.tsx
-  ├── types/
-  │   ├── Product.ts
-  │   ├── Category.ts
-  │   └── Order.ts
-  ├── services/
-  │   └── api.ts
-  └── App.tsx
+  ├── components/      # Componentes reutilizáveis
+  ├── pages/          # Páginas da aplicação
+  ├── services/       # Serviços e APIs
+  ├── types/          # Tipos TypeScript
+  └── App.tsx         # Componente principal
 ```
 
-## Documentação de Componentes
+## 🎨 Storybook
 
-O projeto utiliza o Storybook para documentação dos componentes principais. Para visualizar a documentação:
-
-1. Execute o comando `yarn storybook`
-2. Acesse `http://localhost:6006` no navegador
-
-Componentes documentados:
-- ProductsTable: Tabela para listagem de produtos
-- ProductForm: Formulário para criação/edição de produtos
-
-## Docker
-
-O projeto inclui configuração Docker para o MongoDB. Para reiniciar o banco:
+O projeto utiliza Storybook para documentação de componentes:
 
 ```bash
-# Parar containers
-docker-compose down
+# Iniciar Storybook
+yarn storybook
 
-# Remover volumes (caso necessário)
-docker-compose down -v
-
-# Build para o serviço reactjs
-docker compose build
-
-# Iniciar os containers
-docker compose up -d
+# Build da documentação
+yarn build-storybook
 ```
-````
+
+## 📱 Uso da Aplicação
+
+1. **Dashboard**
+   - Acesse a página inicial para ver os KPIs
+   - Use o seletor de período para filtrar dados do gráfico
+
+2. **Produtos**
+   - Clique em "Add Product" para criar novo
+   - Use o botão de upload para adicionar imagens
+   - Edite ou exclua produtos existentes
+
+3. **Categorias**
+   - Gerencie categorias de produtos
+   - Associe produtos às categorias
+   - Edite ou exclua categorias existentes
+
+4. **Pedidos**
+   - Crie novos pedidos selecionando produtos
+   - Visualize histórico de pedidos
+   - Edite ou exclua pedidos existentes
+
+## 🔨 Scripts Disponíveis
+- `yarn start`: Inicia servidor de desenvolvimento
+- `yarn build`: Gera build de produção
+- `yarn storybook`: Inicia documentação Storybook
