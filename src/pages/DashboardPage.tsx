@@ -32,6 +32,9 @@ import { OrdersByPeriod } from '../types/OrdersByPeriod';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+
 const DashboardPage: React.FC = () => {
   const [metrics, setMetrics] = useState<DashboardMetrics>({
     totalOrders: 0,
@@ -116,7 +119,7 @@ const DashboardPage: React.FC = () => {
                 <AttachMoneyIcon fontSize="large" sx={{ mr: 1 }} />
                 <Typography variant="h6">Total Revenue</Typography>
               </Box>
-              <Typography variant="h4">${metrics.totalRevenue.toFixed(2)}</Typography>
+              <Typography variant="h4">{formatCurrency(metrics.totalRevenue)}</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -127,7 +130,7 @@ const DashboardPage: React.FC = () => {
                 <MonetizationOnIcon fontSize="large" sx={{ mr: 1 }} />
                 <Typography variant="h6">Avg Order Value</Typography>
               </Box>
-              <Typography variant="h4">${metrics.averageOrderValue.toFixed(2)}</Typography>
+              <Typography variant="h4">{formatCurrency(metrics.averageOrderValue)}</Typography>
             </CardContent>
           </Card>
         </Grid>
