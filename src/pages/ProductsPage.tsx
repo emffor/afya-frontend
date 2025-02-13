@@ -24,6 +24,7 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
+  Box,
 } from '@mui/material';
 
 const ProductsPage: React.FC = () => {
@@ -38,6 +39,10 @@ const ProductsPage: React.FC = () => {
     price: 0,
     categoryId: '',
   });
+
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>('');
 
   const navigate = useNavigate();
 
@@ -131,6 +136,37 @@ const ProductsPage: React.FC = () => {
     setDeleteProductId(null);
   };
 
+  const openUploadModal = () => {
+    setSelectedFile(null);
+    setUploadedImageUrl('');
+    setUploadModalOpen(true);
+  };
+
+  const closeUploadModal = () => {
+    setUploadModalOpen(false);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+    const formDataUpload = new FormData();
+    formDataUpload.append('file', selectedFile);
+
+    try {
+      const response = await api.post('/products/upload-image', formDataUpload, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setUploadedImageUrl(response.data.imageUrl);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    }
+  };
+
   return (
     <Container>
       <Button variant="contained" onClick={() => navigate('/')} sx={{ mt: 2 }}>
@@ -139,9 +175,14 @@ const ProductsPage: React.FC = () => {
       <Typography variant="h4" gutterBottom>
         Products
       </Typography>
-      <Button variant="contained" color="primary" onClick={openAddModal}>
-        Add Product
-      </Button>
+      <Box sx={{ mb: 2 }}>
+        <Button variant="contained" color="primary" onClick={openAddModal}>
+          Add Product
+        </Button>
+        <Button variant="contained" color="secondary" onClick={openUploadModal} sx={{ ml: 2 }}>
+          Upload Product Image
+        </Button>
+      </Box>
       <TableContainer component={Paper} sx={{ mt: 2 }}>
         <Table>
           <TableHead>
@@ -162,7 +203,7 @@ const ProductsPage: React.FC = () => {
                   <Button variant="contained" color="primary" onClick={() => openEditModal(product)}>
                     Edit
                   </Button>
-                  <Button variant="contained" color="secondary" onClick={() => handleDelete(product._id)} sx={{ ml: 1 }}>
+                  <Button variant="contained" color="error" onClick={() => handleDelete(product._id)} sx={{ ml: 1 }}>
                     Delete
                   </Button>
                 </TableCell>
@@ -228,8 +269,32 @@ const ProductsPage: React.FC = () => {
           <Button onClick={cancelDelete} color="primary">
             Cancel
           </Button>
-          <Button onClick={confirmDelete} color="secondary">
+          <Button onClick={confirmDelete} color="error">
             Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={uploadModalOpen} onClose={closeUploadModal}>
+        <DialogTitle>Upload Product Image</DialogTitle>
+        <DialogContent>
+          <input type="file" onChange={handleFileChange} />
+          <Button variant="contained" color="primary" onClick={handleUpload} sx={{ mt: 2 }}>
+            Upload
+          </Button>
+          {uploadedImageUrl && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="subtitle1">Uploaded Image:</Typography>
+              <a href={uploadedImageUrl} target="_blank" rel="noopener noreferrer">
+                {uploadedImageUrl}
+              </a>
+              <Box component="img" src={uploadedImageUrl} alt="Uploaded" sx={{ width: 200, mt: 1 }} />
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeUploadModal} color="secondary">
+            Close
           </Button>
         </DialogActions>
       </Dialog>
