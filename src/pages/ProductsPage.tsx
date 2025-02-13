@@ -22,7 +22,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  SelectChangeEvent,
 } from '@mui/material';
 
 const ProductsPage: React.FC = () => {
@@ -76,17 +75,15 @@ const ProductsPage: React.FC = () => {
     setCurrentProduct(null);
   };
 
-  const handleFormChange = (
-    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }> | SelectChangeEvent
-  ) => {
-    const { name, value } = e.target as { name?: string; value: unknown };
-    setFormData({ ...formData, [name as string]: value as string });
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name as string]: value });
   };
 
   const handleSave = () => {
     const payload = {
       ...formData,
-      category: formData.categoryId,
+      category: formData.categoryId, 
     };
   
     if (currentProduct) {
@@ -131,9 +128,7 @@ const ProductsPage: React.FC = () => {
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>
-        Products
-      </Typography>
+      <Typography variant="h4" gutterBottom>Products</Typography>
       <Button variant="contained" color="primary" onClick={openAddModal}>
         Add Product
       </Button>
@@ -154,10 +149,10 @@ const ProductsPage: React.FC = () => {
                 <TableCell>${product.price}</TableCell>
                 <TableCell>{product.category.name}</TableCell>
                 <TableCell>
-                  <Button variant="contained" color="primary" onClick={() => openEditModal(product)}>
+                  <Button color="primary" onClick={() => openEditModal(product)}>
                     Edit
                   </Button>
-                  <Button variant="contained" color="secondary" onClick={() => handleDelete(product._id)}>
+                  <Button color="secondary" onClick={() => handleDelete(product._id)}>
                     Delete
                   </Button>
                 </TableCell>
@@ -167,6 +162,7 @@ const ProductsPage: React.FC = () => {
         </Table>
       </TableContainer>
 
+      {/* Modal para Adicionar/Editar Produto */}
       <Dialog open={modalOpen} onClose={handleCloseModal}>
         <DialogTitle>{currentProduct ? 'Edit Product' : 'Add Product'}</DialogTitle>
         <DialogContent>
@@ -194,7 +190,7 @@ const ProductsPage: React.FC = () => {
               name="categoryId"
               value={formData.categoryId}
               label="Category"
-              onChange={handleFormChange}
+              onChange={handleFormChange as any}
             >
               {categories.map((cat) => (
                 <MenuItem key={cat._id} value={cat._id}>
@@ -205,12 +201,8 @@ const ProductsPage: React.FC = () => {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseModal} color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={handleSave} color="primary">
-            Save
-          </Button>
+          <Button onClick={handleCloseModal} color="secondary">Cancel</Button>
+          <Button onClick={handleSave} color="primary">Save</Button>
         </DialogActions>
       </Dialog>
 
@@ -220,12 +212,8 @@ const ProductsPage: React.FC = () => {
           <Typography>Are you sure you want to delete this product?</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelDelete} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={confirmDelete} color="secondary">
-            Delete
-          </Button>
+          <Button onClick={cancelDelete} color="primary">Cancel</Button>
+          <Button onClick={confirmDelete} color="secondary">Delete</Button>
         </DialogActions>
       </Dialog>
     </Container>
