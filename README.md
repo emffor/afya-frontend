@@ -102,3 +102,22 @@ O projeto utiliza o Storybook para documentação dos componentes principais. Pa
 Componentes documentados:
 - ProductsTable: Tabela para listagem de produtos
 - ProductForm: Formulário para criação/edição de produtos
+
+## Docker
+
+O projeto inclui configuração Docker para o MongoDB. Para reiniciar o banco:
+
+```bash
+# Parar containers
+docker-compose down
+
+# Remover volumes (caso necessário)
+docker-compose down -v
+
+# Build para o serviço reactjs
+docker compose build
+
+# Iniciar os containers
+docker compose up -d
+```
+````
