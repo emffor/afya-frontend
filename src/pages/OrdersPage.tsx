@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { Order } from '../types/Order';
 import { Product } from '../types/Product';
@@ -39,6 +40,7 @@ const OrdersPage: React.FC = () => {
     orderDate: '',
     products: [] as string[], 
   });
+  const navigate = useNavigate();
 
   const fetchOrders = () => {
     api.get<Order[]>('/orders')
@@ -67,7 +69,7 @@ const OrdersPage: React.FC = () => {
     setFormData({
       total: order.total,
       orderDate: order.orderDate.substring(0, 10), 
-      products: order.products,
+      products: order.products, 
     });
     setCurrentOrder(order);
     setModalOpen(true);
@@ -78,7 +80,9 @@ const OrdersPage: React.FC = () => {
     setCurrentOrder(null);
   };
 
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name as string]: value });
   };
@@ -125,11 +129,16 @@ const OrdersPage: React.FC = () => {
 
   return (
     <Container>
-      <Typography variant="h4">Orders</Typography>
+      <Button variant="contained" onClick={() => navigate('/')} sx={{ mt: 2 }}>
+        {'< Back'}
+      </Button>
+      <Typography variant="h4" gutterBottom sx={{ mt: 2 }}>
+        Orders
+      </Typography>
       <Button variant="contained" color="primary" onClick={openAddModal}>
         Add Order
       </Button>
-      <TableContainer component={Paper} style={{ marginTop: '16px' }}>
+      <TableContainer component={Paper} sx={{ mt: 2 }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -146,10 +155,10 @@ const OrdersPage: React.FC = () => {
                 <TableCell>${order.total}</TableCell>
                 <TableCell>{new Date(order.orderDate).toLocaleDateString()}</TableCell>
                 <TableCell>
-                  <Button color="primary" onClick={() => openEditModal(order)}>
+                  <Button variant="contained" color="primary" onClick={() => openEditModal(order)}>
                     Edit
                   </Button>
-                  <Button color="secondary" onClick={() => handleDelete(order._id)}>
+                  <Button variant="contained" color="secondary" onClick={() => handleDelete(order._id)} sx={{ ml: 1 }}>
                     Delete
                   </Button>
                 </TableCell>
@@ -190,7 +199,7 @@ const OrdersPage: React.FC = () => {
               value={formData.products}
               onChange={handleFormChange as any}
               input={<OutlinedInput label="Products" />}
-              renderValue={(selected) => 
+              renderValue={(selected) =>
                 (selected as string[])
                   .map((id) => {
                     const prod = products.find((p) => p._id === id);
@@ -209,8 +218,12 @@ const OrdersPage: React.FC = () => {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseModal} color="secondary">Cancel</Button>
-          <Button onClick={handleSave} color="primary">Save</Button>
+          <Button onClick={handleCloseModal} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} color="primary">
+            Save
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -220,8 +233,12 @@ const OrdersPage: React.FC = () => {
           <Typography>Are you sure you want to delete this order?</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelDelete} color="primary">Cancel</Button>
-          <Button onClick={confirmDelete} color="secondary">Delete</Button>
+          <Button onClick={cancelDelete} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={confirmDelete} color="secondary">
+            Delete
+          </Button>
         </DialogActions>
       </Dialog>
     </Container>

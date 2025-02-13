@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { Category } from '../types/Category';
 import {
@@ -26,6 +27,7 @@ const CategoriesPage: React.FC = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteCategoryId, setDeleteCategoryId] = useState<string | null>(null);
   const [formData, setFormData] = useState({ name: '', description: '' });
+  const navigate = useNavigate();
 
   const fetchCategories = () => {
     api.get<Category[]>('/categories')
@@ -100,11 +102,16 @@ const CategoriesPage: React.FC = () => {
 
   return (
     <Container>
-      <Typography variant="h4">Categories</Typography>
+      <Button variant="contained" onClick={() => navigate('/')} sx={{ mt: 2 }}>
+        {'< Back'}
+      </Button>
+      <Typography variant="h4" gutterBottom sx={{ mt: 2 }}>
+        Categories
+      </Typography>
       <Button variant="contained" color="primary" onClick={openAddModal}>
         Add Category
       </Button>
-      <TableContainer component={Paper} style={{ marginTop: '16px' }}>
+      <TableContainer component={Paper} sx={{ mt: 2 }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -119,10 +126,10 @@ const CategoriesPage: React.FC = () => {
                 <TableCell>{category.name}</TableCell>
                 <TableCell>{category.description}</TableCell>
                 <TableCell>
-                  <Button color="primary" onClick={() => openEditModal(category)}>
+                  <Button variant="contained" color="primary" onClick={() => openEditModal(category)}>
                     Edit
                   </Button>
-                  <Button color="secondary" onClick={() => handleDelete(category._id)}>
+                  <Button variant="contained" color="secondary" onClick={() => handleDelete(category._id)} sx={{ ml: 1 }}>
                     Delete
                   </Button>
                 </TableCell>
@@ -153,8 +160,12 @@ const CategoriesPage: React.FC = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseModal} color="secondary">Cancel</Button>
-          <Button onClick={handleSave} color="primary">Save</Button>
+          <Button onClick={handleCloseModal} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} color="primary">
+            Save
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -164,8 +175,12 @@ const CategoriesPage: React.FC = () => {
           <Typography>Are you sure you want to delete this category?</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelDelete} color="primary">Cancel</Button>
-          <Button onClick={confirmDelete} color="secondary">Delete</Button>
+          <Button onClick={cancelDelete} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={confirmDelete} color="secondary">
+            Delete
+          </Button>
         </DialogActions>
       </Dialog>
     </Container>
