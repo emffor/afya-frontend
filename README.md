@@ -4,8 +4,6 @@ Sistema de gerenciamento de produtos, categorias e pedidos com dashboard de KPIs
 
 ## 🎥 Demo da Aplicação
 
-https://github.com/seu-usuario/afya-frontend/assets/video.gif
-
 [![Assista ao vídeo da demonstração](https://img.youtube.com/vi/nCvctiUvKr8/maxresdefault.jpg)](https://youtu.be/nCvctiUvKr8)
 
 ### Dashboard
